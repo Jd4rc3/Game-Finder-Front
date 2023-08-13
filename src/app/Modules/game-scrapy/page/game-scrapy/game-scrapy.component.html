@@ -1,45 +1,38 @@
-<div class="grid">
-  <p-card
+<app-navbar (event)="print($event)"></app-navbar>
+<div class="mt-3 grid">
+  <app-card
     class="col-12 md:col-6 lg:col-4 xl:col-3"
     *ngFor="let game of games"
-    [subheader]="game.title"
+    [title]="game.title"
+    [image]="game.photos[2].url"
+    [template]="template"
   >
-    <ng-template pTemplate="header">
-      <img
-        alt="Card"
-        src="https://primefaces.org/cdn/primeng/images/usercard.png"
-      />
-    </ng-template>
-    <p>
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed
-      consequuntur error repudiandae numquam deserunt quisquam repellat libero
-      asperiores earum nam nobis, culpa ratione quam perferendis esse,
-      cupiditate neque quas!
-    </p>
-    <ng-template pTemplate="footer">
-      <!-- tag -->
-      <p-tag
-        [style]="{
-          background:
-            'linear-gradient(-225deg,#AC32E4 0%,#7918F2 48%,#4801FF 100%)'
-        }"
-      >
-        <div class="flex align-items-center gap-2">
-          <i class="pi pi-dollar"></i>
-          <span class="text-base">{{ game.price }}</span>
-        </div>
-      </p-tag>
+      <ng-template #template pTemplate="footer">
+        <!-- tag -->
+        <p-tag
+          [style]="{
+            background:
+              'linear-gradient(-225deg,#AC32E4 0%,#7918F2 48%,#4801FF 100%)'
+          }"
+        >
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-dollar"></i>
+            <span class="text-base">
+              {{ game.price | number }} {{ game.exchange }}</span
+            >
+          </div>
+        </p-tag>
 
-      <div>
-        <a [href]="game.link">
-          <p-button
-            label="Comprar"
-            styleClass="p-button-info mt-2"
-            icon="pi pi-check"
-          ></p-button>
-        </a>
-      </div>
-      <!-- end template -->
-    </ng-template>
-  </p-card>
+        <div>
+          <a [href]="game.link">
+            <p-button
+              label="Comprar"
+              styleClass="p-button-info mt-2"
+              icon="pi pi-check"
+            ></p-button>
+          </a>
+        </div>
+        <!-- end template -->
+      </ng-template>
+  </app-card>
 </div>

@@ -4,9 +4,17 @@ import { CommonModule } from '@angular/common';
 import { GameScrapyRoutingModule } from './game-scrapy-routing.module';
 import { GameScrapyComponent } from './page/game-scrapy/game-scrapy.component';
 import { PrimengModule } from '../primeng/primeng.module';
+import { CardComponent } from './shared/components/card/card.component';
+import { NavbarComponent } from './shared/components/navbar/navbar.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [GameScrapyComponent],
-  imports: [CommonModule, GameScrapyRoutingModule, PrimengModule],
+  declarations: [GameScrapyComponent, CardComponent, NavbarComponent],
+  imports: [
+    CommonModule,
+    GameScrapyRoutingModule,
+    PrimengModule,
+    ReactiveFormsModule,
+  ],
 })
 export class GameScrapyModule {}

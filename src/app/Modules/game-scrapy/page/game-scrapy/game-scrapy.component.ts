@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ScrapyService } from '../../services/scrapy.service';
 import { Game } from 'src/app/Modules/Core/Domain/game.model';
 
@@ -16,7 +16,13 @@ export class GameScrapyComponent implements OnInit {
     });
   }
 
+  @ViewChild('template', { static: true }) template!: Element;
+
   get games(): Game[] {
     return this._games;
+  }
+
+  print(value: string) {
+    console.log(value);
   }
 }
