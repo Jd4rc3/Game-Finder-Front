@@ -11,7 +11,7 @@ export class GameScrapyComponent implements OnInit {
   constructor(private scrapy: ScrapyService) {}
   private _games: Game[] = [];
   ngOnInit(): void {
-    this.scrapy.getScrapyData().subscribe((data) => {
+    this.scrapy.searchGame("hollow","xbox").subscribe((data) => {
       this._games = data;
     });
   }
