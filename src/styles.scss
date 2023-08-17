@@ -1,2 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @import "primeicons/primeicons.css";
+.grid {
+  margin: 0 !important;
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
