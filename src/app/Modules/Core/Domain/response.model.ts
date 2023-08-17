@@ -1,20 +1,11 @@
-import { Photo } from "./game.model";
+import { Game, Photo } from "./game.model";
 
 export interface Response {
   status: string;
-  items: Item[];
+  items: Game[];
   items_dropped: any[];
   stats: Stats;
   spider_name: string;
-}
-
-export interface Item {
-  title: string;
-  price: number;
-  link: string;
-  store: string;
-  photos: Photo[];
-  exchange: string;
 }
 
 export interface Stats {
