@@ -5,8 +5,9 @@ import { TagModule } from 'primeng/tag';
 import { ImageModule } from 'primeng/image';
 import { MenubarModule } from 'primeng/menubar';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessagesModule } from 'primeng/messages';
 
 @NgModule({
-  exports: [CardModule, ButtonModule, TagModule, ImageModule, MenubarModule,InputTextModule],
+  exports: [CardModule, ButtonModule, TagModule, ImageModule, MenubarModule,InputTextModule,MessagesModule],
 })
 export class PrimengModule {}
