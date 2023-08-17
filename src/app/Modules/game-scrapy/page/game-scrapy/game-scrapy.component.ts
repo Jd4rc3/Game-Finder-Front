@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ScrapyService } from '../../services/scrapy.service';
 import { Game } from 'src/app/Modules/Core/Domain/game.model';
+import { Message } from 'primeng/api';
 
 @Component({
   selector: 'app-game-scrapy',
@@ -8,12 +9,16 @@ import { Game } from 'src/app/Modules/Core/Domain/game.model';
   styleUrls: ['./game-scrapy.component.scss'],
 })
 export class GameScrapyComponent implements OnInit {
-  constructor(private scrapy: ScrapyService) {}
-  private _games: Game[] = [];
+  messages: Message[] = [];
+  showLoader = false;
+  _games: Game[] = [];
+
+  constructor(private scrapy: ScrapyService) { }
+
   ngOnInit(): void {
-    this.scrapy.searchGame("hollow","xbox").subscribe((data) => {
-      this._games = data;
-    });
+    this.messages = [
+      { severity: 'info', summary: 'Info', detail: 'Por favor ingresa el nombre de un juego' },
+    ];
   }
 
   @ViewChild('template', { static: true }) template!: Element;
@@ -22,7 +27,12 @@ export class GameScrapyComponent implements OnInit {
     return this._games;
   }
 
-  print(value: string) {
-    console.log(value);
+  search(value: string) {
+    this.showLoader = true;
+    this._games = [];
+    this.scrapy.searchGame(value, 'xbox').subscribe((data) => {
+      this._games = data;
+      this.showLoader = false;
+    });
   }
 }

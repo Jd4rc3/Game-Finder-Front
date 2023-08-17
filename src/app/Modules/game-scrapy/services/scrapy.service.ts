@@ -23,6 +23,6 @@ export class ScrapyService {
       .get<Response>(environment.apiUrl, {
         params: this.buildArgs(gameTitle, platform),
       })
-      .pipe(map((response: Response) => response.items as Game[]));
+      .pipe(map((response: Response) => response.items));
   }
 }
