@@ -17,6 +17,11 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
+    "plugins": [
+      {
+        "name": "@angular/language-service"
+      }
+    ],
     "useDefineForClassFields": false,
     "lib": [
       "ES2022",
