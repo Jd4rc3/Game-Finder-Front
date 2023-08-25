@@ -1,6 +1,13 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Subject, debounceTime, takeUntil } from 'rxjs';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { Subject, debounceTime } from 'rxjs';
+import { ScrapyService } from '../../../services/scrapy.service';
+import { Value } from 'src/app/Modules/Core/Domain/parameter.model';
 
 @Component({
   selector: 'app-navbar',
@@ -8,26 +15,57 @@ import { Subject, debounceTime, takeUntil } from 'rxjs';
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  public search!: FormControl;
+  search!: string;
 
-  subjet:Subject<void> = new Subject<void>();
+  debouncer: Subject<string> = new Subject<string>();
+
+  platforms: Value[] = [];
+
+  selectedPlatforms: Value[] = [];
+
+  subjet: Subject<void> = new Subject<void>();
 
   @Output()
-  event: EventEmitter<string> = new EventEmitter<string>();
+  event: EventEmitter<{ input: string; platform: string }> = new EventEmitter<{
+    input: string;
+    platform: string;
+  }>();
 
-  constructor() {
-    this.search = new FormControl('');
-  }
+  constructor(private scrapyService: ScrapyService) { }
+
   ngOnDestroy(): void {
     this.subjet.next();
     this.subjet.complete();
   }
 
   ngOnInit(): void {
-    this.search.valueChanges
-      .pipe(
-       takeUntil(this.subjet), 
-        debounceTime(500))
-      .subscribe((value: string) => value && this.event.emit(value));
+    //    gets the platforms from the backend
+    this.scrapyService.getSpiderArgs('platforms').subscribe((response) => {
+      // Reduce the redundancy of the platforms with the same commonName
+      this.platforms = response.values.reduce(
+        (acc: Value[], curr: Value) => {
+          const index = acc.findIndex((x) => x.commonName === curr.commonName);
+          if (index === -1) {
+            acc.push(curr);
+          }
+          return acc;
+        }, []
+      );
+    });
+
+    //   subscribes to the event that emits the game search
+    this.debouncer.pipe(debounceTime(300)).subscribe((value) =>
+      this.event.emit({
+        platform: this.selectedPlatforms.map((x) => x.valueName).join(','),
+        input: value,
+      })
+    );
+  }
+
+  onSearch() {
+    this.search = this.search.trim();
+    if (this.search.length > 3) {
+      this.debouncer.next(this.search);
+    }
   }
 }

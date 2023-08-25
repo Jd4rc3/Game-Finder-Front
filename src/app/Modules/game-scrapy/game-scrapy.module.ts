@@ -6,7 +6,7 @@ import { GameScrapyComponent } from './page/game-scrapy/game-scrapy.component';
 import { PrimengModule } from '../primeng/primeng.module';
 import { CardComponent } from './shared/components/card/card.component';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoadingComponent } from './shared/components/loading/loading.component';
 
 @NgModule({
@@ -15,6 +15,7 @@ import { LoadingComponent } from './shared/components/loading/loading.component'
     CommonModule,
     GameScrapyRoutingModule,
     PrimengModule,
+    FormsModule,
     ReactiveFormsModule,
   ],
 })

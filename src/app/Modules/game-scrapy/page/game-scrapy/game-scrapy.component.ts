@@ -27,10 +27,10 @@ export class GameScrapyComponent implements OnInit {
     return this._games;
   }
 
-  search(value: string) {
+  search(value: { input: string; platform: string}) {
     this.showLoader = true;
     this._games = [];
-    this.scrapy.searchGame(value, 'xbox').subscribe((data) => {
+    this.scrapy.searchGame(value.input, value.platform).subscribe((data) => {
       this._games = data;
       this.showLoader = false;
     });
