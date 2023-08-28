@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ScrapyService } from '../../services/scrapy.service';
 import { Game } from 'src/app/Modules/Core/Domain/game.model';
 import { Message } from 'primeng/api';
+import { Parameter } from '../../../Core/Domain/parameter.model';
 
 @Component({
   selector: 'app-game-scrapy',
@@ -13,11 +14,15 @@ export class GameScrapyComponent implements OnInit {
   showLoader = false;
   _games: Game[] = [];
 
-  constructor(private scrapy: ScrapyService) { }
+  constructor(private scrapy: ScrapyService) {}
 
   ngOnInit(): void {
     this.messages = [
-      { severity: 'info', summary: 'Info', detail: 'Por favor ingresa el nombre de un juego' },
+      {
+        severity: 'info',
+        summary: 'Info',
+        detail: 'Por favor ingresa el nombre de un juego',
+      },
     ];
   }
 
@@ -27,12 +32,14 @@ export class GameScrapyComponent implements OnInit {
     return this._games;
   }
 
-  search(value: { input: string; platform: string}) {
+  search(value: { game: string; param: Parameter[] }) {
     this.showLoader = true;
     this._games = [];
-    this.scrapy.searchGame(value.input, value.platform).subscribe((data) => {
-      this._games = data;
-      this.showLoader = false;
-    });
+    this.scrapy
+      .searchGame(value.game, value.param)
+      .subscribe((data: Game[]) => {
+        this._games.push(...data);
+        this.showLoader = false;
+      });
   }
 }

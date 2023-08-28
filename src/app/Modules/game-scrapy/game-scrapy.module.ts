@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 import { GameScrapyRoutingModule } from './game-scrapy-routing.module';
 import { GameScrapyComponent } from './page/game-scrapy/game-scrapy.component';
@@ -10,13 +10,19 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoadingComponent } from './shared/components/loading/loading.component';
 
 @NgModule({
-  declarations: [GameScrapyComponent, CardComponent, NavbarComponent, LoadingComponent],
+  declarations: [
+    GameScrapyComponent,
+    CardComponent,
+    NavbarComponent,
+    LoadingComponent,
+  ],
   imports: [
     CommonModule,
     GameScrapyRoutingModule,
     PrimengModule,
     FormsModule,
     ReactiveFormsModule,
+    NgOptimizedImage,
   ],
 })
 export class GameScrapyModule {}

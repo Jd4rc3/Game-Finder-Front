@@ -1,26 +1,32 @@
 <p-menubar>
   <ng-template pTemplate="start">
-    <img src="assets/icons/arcade.svg" height="40" class="mr-2" />
+    <img
+      alt="arcade stick"
+      class="mr-2"
+      height="40"
+      ngSrc="assets/icons/arcade.svg"
+      width="40"
+    />
   </ng-template>
   <ng-template pTemplate="end">
     <div>
       <p-multiSelect
         [options]="platforms"
         [(ngModel)]="selectedPlatforms"
-        defaultLabel="Selecciona una plataforma"
+        placeholder="Platform"
         optionLabel="valueName"
         display="chip"
         [style]="{ width: '15rem' }"
       ></p-multiSelect>
-        <input
-          type="text"
-          [(ngModel)]="search"
-          (input)="onSearch()"
-          pInputText
-          [style]="{ width: '15rem' }"
-          id="disabled-input"
-          [disabled]="!selectedPlatforms.length"
-        />
+      <input
+        (input)="onSearch()"
+        [(ngModel)]="search"
+        [disabled]="!selectedPlatforms.length"
+        [style]="{ width: '15rem' }"
+        id="disabled-input"
+        pInputText
+        type="text"
+      />
     </div>
   </ng-template>
 </p-menubar>

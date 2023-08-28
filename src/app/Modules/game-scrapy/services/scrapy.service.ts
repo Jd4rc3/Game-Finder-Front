@@ -1,38 +1,72 @@
 import { Injectable } from '@angular/core';
-import { Observable, map, merge, mergeMap } from 'rxjs';
+import { map, merge, mergeMap, Observable } from 'rxjs';
 import { Game } from '../../Core/Domain/game.model';
-import { HttpParams, HttpClient as http } from '@angular/common/http';
+import { HttpClient as http, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment.development';
 import { Response } from '../../Core/Domain/response.model';
-import { Parameter, Value } from '../../Core/Domain/parameter.model';
+import { Parameter } from '../../Core/Domain/parameter.model';
+import { SpecificParameter } from '../../Core/Domain/specific.parameter';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ScrapyService {
-  constructor(private http: http) { }
-  cachePlatforms: Value[] = [];
+  constructor(private http: http) {}
 
-  buildArgs(game: string, platforms: string, store: string = 'eneba') {
+  buildArgs(
+    game: string,
+    args: SpecificParameter[],
+    store: string,
+  ): HttpParams {
+    // I have a list of params whose shape is {paramName:string} and I want to flatten it to an object when i do it white spread operator it creates a key object with the index how can i do to avoid that?
+    const params = args.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+
     return new HttpParams()
-      .set('crawl_args', JSON.stringify({ game, platforms, regions: 'global,colombia,latam', blacklist: 'argentina' }))
+      .set('crawl_args', JSON.stringify({ game, ...params }))
       .set('spider_name', store)
       .set('start_requests', 'false');
   }
 
-  public searchGame(gameTitle: string, platform: string): Observable<Game[]> {
-    return merge(this.cachePlatforms.map((_) => {
-      return this.http.get<Response>(environment.apiUrl, {
-        params: this.buildArgs(gameTitle, platform),
-      });
-    })).pipe(mergeMap((response) => response), map((response) => response.items));
+  public searchGame(
+    gameTitle: string,
+    params: Parameter[],
+  ): Observable<Game[]> {
+    const spiderArgs = this.classifier(params);
+    const requestList: Observable<Response>[] = [];
+
+    spiderArgs.forEach((values, key) => {
+      requestList.push(
+        this.http.get<Response>(environment.apiUrl, {
+          params: this.buildArgs(gameTitle, values, key),
+        }),
+      );
+    });
+
+    return merge(requestList).pipe(
+      mergeMap((response) => response),
+      map((response) => response.items),
+    );
   }
 
   public getSpiderArgs(arg: string): Observable<Parameter> {
-    const obs = this.http.get<Parameter>(`${environment.paramsUrl}/${arg}`);
-    obs.subscribe((response) => this.cachePlatforms = response.values);
-
-    return obs
+    return this.http.get<Parameter>(`${environment.paramsUrl}/${arg}`);
   }
 
+  classifier(args: Parameter[]) {
+    const classifiedArgs = new Map<string, SpecificParameter[]>();
+
+    args.forEach((arg) => {
+      arg.values.forEach((value) => {
+        if (classifiedArgs.has(value.name)) {
+          classifiedArgs.get(value.name)?.push({ [arg.name]: value.valueName });
+        } else {
+          classifiedArgs.set(value.commonName, [
+            { [arg.name]: value.valueName },
+          ]);
+        }
+      });
+    });
+
+    return classifiedArgs;
+  }
 }

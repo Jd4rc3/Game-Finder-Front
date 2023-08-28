@@ -1,4 +1,4 @@
-import { Game, Photo } from "./game.model";
+import { Game, Photo } from './game.model';
 
 export interface Response {
   status: string;
