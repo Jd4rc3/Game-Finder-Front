@@ -11,12 +11,12 @@
   <ng-template pTemplate="end">
     <div>
       <p-multiSelect
-        [options]="platforms"
         [(ngModel)]="selectedPlatforms"
-        placeholder="Platform"
-        optionLabel="valueName"
-        display="chip"
+        [options]="platforms"
         [style]="{ width: '15rem' }"
+        display="chip"
+        optionLabel="valueName"
+        placeholder="Platform"
       ></p-multiSelect>
       <input
         (input)="onSearch()"

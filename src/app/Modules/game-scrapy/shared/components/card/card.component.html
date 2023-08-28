@@ -1,11 +1,7 @@
 <p-card [header]="title">
   <ng-template pTemplate="header">
     <!-- <img alt="Card" [src]="image" /> -->
-    <p-image
-      [src]="image"
-      [alt]="title +'image'"
-      [preview]="true"
-    ></p-image>
+    <p-image [alt]="title + 'image'" [preview]="true" [src]="image"></p-image>
   </ng-template>
 
   <ng-container [ngTemplateOutlet]="template"></ng-container>

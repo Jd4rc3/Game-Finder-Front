@@ -6,7 +6,7 @@ const routes: Routes = [
     path: 'shop',
     loadChildren: () =>
       import('./Modules/game-scrapy/game-scrapy.module').then(
-        (m) => m.GameScrapyModule
+        (m) => m.GameScrapyModule,
       ),
   },
   {

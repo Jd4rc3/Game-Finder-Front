@@ -1,14 +1,14 @@
 export interface Game {
-  title:    string;
-  price:    number;
-  link:     string;
-  store:    string;
-  photos:   Photo[];
+  title: string;
+  price: number;
+  link: string;
+  store: string;
+  photos: Photo[];
   exchange: string;
 }
 
 export interface Photo {
-  url:    string;
-  width:  string;
+  url: string;
+  width: string;
   height: string;
 }

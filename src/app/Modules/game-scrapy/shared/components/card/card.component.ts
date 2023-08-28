@@ -13,5 +13,5 @@ export class CardComponent {
   image: string = '';
 
   @Input({ required: true })
-  template!:TemplateRef<Element>;
+  template!: TemplateRef<Element>;
 }

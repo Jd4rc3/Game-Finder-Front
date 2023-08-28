@@ -12,9 +12,15 @@ import { Parameter } from '../../../Core/Domain/parameter.model';
 export class GameScrapyComponent implements OnInit {
   messages: Message[] = [];
   showLoader = false;
-  _games: Game[] = [];
+  @ViewChild('template', { static: true }) template!: Element;
 
   constructor(private scrapy: ScrapyService) {}
+
+  _games: Game[] = [];
+
+  get games(): Game[] {
+    return this._games;
+  }
 
   ngOnInit(): void {
     this.messages = [
@@ -24,12 +30,6 @@ export class GameScrapyComponent implements OnInit {
         detail: 'Por favor ingresa el nombre de un juego',
       },
     ];
-  }
-
-  @ViewChild('template', { static: true }) template!: Element;
-
-  get games(): Game[] {
-    return this._games;
   }
 
   search(value: { game: string; param: Parameter[] }) {
