@@ -1,4 +1,4 @@
-<app-navbar (event)="search($event)"></app-navbar>
+<app-navbar (OnSearch)="search($event)"></app-navbar>
 
 <p-messages
   *ngIf="!showLoader && games.length == 0"

@@ -4,6 +4,7 @@
       alt="arcade stick"
       class="mr-2"
       height="40"
+      priority
       ngSrc="assets/icons/arcade.svg"
       width="40"
     />
@@ -11,13 +12,23 @@
   <ng-template pTemplate="end">
     <div>
       <p-multiSelect
+        [(ngModel)]="selectedRegions"
+        [options]="regions"
+        [style]="{ width: '15rem' }"
+        display="chip"
+        optionLabel="commonName"
+        placeholder="Region"
+      ></p-multiSelect>
+
+      <p-multiSelect
         [(ngModel)]="selectedPlatforms"
         [options]="platforms"
         [style]="{ width: '15rem' }"
         display="chip"
-        optionLabel="valueName"
+        optionLabel="commonName"
         placeholder="Platform"
       ></p-multiSelect>
+
       <input
         (input)="onSearch()"
         [(ngModel)]="search"

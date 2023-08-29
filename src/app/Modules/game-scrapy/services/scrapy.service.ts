@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, merge, mergeMap, Observable } from 'rxjs';
+import { map, merge, mergeMap, Observable, Subject } from 'rxjs';
 import { Game } from '../../Core/Domain/game.model';
 import { HttpClient as http, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment.development';
@@ -11,14 +11,19 @@ import { SpecificParameter } from '../../Core/Domain/specific.parameter';
   providedIn: 'root',
 })
 export class ScrapyService {
-  constructor(private http: http) {}
+  constructor(private http: http) { }
+  params = new Subject<Parameter[]>();
+  params$ = this.params.asObservable();
+
+  pushParams(params: Parameter[]) {
+    this.params.next(params);
+  }
 
   buildArgs(
     game: string,
     args: SpecificParameter[],
     store: string,
   ): HttpParams {
-    // I have a list of params whose shape is {paramName:string} and I want to flatten it to an object when i do it white spread operator it creates a key object with the index how can i do to avoid that?
     const params = args.reduce((acc, curr) => ({ ...acc, ...curr }), {});
 
     return new HttpParams()
@@ -48,8 +53,8 @@ export class ScrapyService {
     );
   }
 
-  public getSpiderArgs(arg: string): Observable<Parameter> {
-    return this.http.get<Parameter>(`${environment.paramsUrl}/${arg}`);
+  getSpiderArgs(arg: string): void {
+    this.http.get<Parameter>(`${environment.paramsUrl}/${arg}`).subscribe((params) => { this.pushParams(params) });
   }
 
   classifier(args: Parameter[]) {

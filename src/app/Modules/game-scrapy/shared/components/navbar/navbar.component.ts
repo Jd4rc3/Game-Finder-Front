@@ -8,6 +8,7 @@ import {
 import { debounceTime, Subject } from 'rxjs';
 import { ScrapyService } from '../../../services/scrapy.service';
 import { Parameter, Value } from 'src/app/Modules/Core/Domain/parameter.model';
+import { GameSearch } from 'src/app/Modules/Core/Domain/game-search.model';
 
 @Component({
   selector: 'app-navbar',
@@ -17,45 +18,40 @@ import { Parameter, Value } from 'src/app/Modules/Core/Domain/parameter.model';
 export class NavbarComponent implements OnInit, OnDestroy {
   search!: string;
 
-  debouncer: Subject<string> = new Subject<string>();
+  bouncer: Subject<string> = new Subject<string>();
 
   platforms: Value[] = [];
 
   selectedPlatforms: Value[] = [];
 
-  subjet: Subject<void> = new Subject<void>();
+  regions: Value[] = [];
+
+  selectedRegions: Value[] = [];
+
+  subject: Subject<void> = new Subject<void>();
 
   @Output()
-  event: EventEmitter<{ game: string; param: Parameter[] }> = new EventEmitter<{
-    game: string;
-    param: Parameter[];
-  }>();
+  OnSearch: EventEmitter<GameSearch> = new EventEmitter<GameSearch>();
 
-  constructor(private scrapyService: ScrapyService) {}
+  constructor(private scrapyService: ScrapyService) { }
 
   ngOnDestroy(): void {
-    this.subjet.next();
-    this.subjet.complete();
+    this.subject.next();
+    this.subject.complete();
   }
 
   ngOnInit(): void {
-    //    gets the platforms from the backend
-    this.scrapyService.getSpiderArgs('platforms').subscribe((response) => {
-      // Reduce the redundancy of the platforms with the same commonName
-      this.platforms = response.values.reduce((acc: Value[], curr: Value) => {
-        const index = acc.findIndex((x) => x.commonName === curr.commonName);
-        if (index === -1) {
-          curr.valueName =
-            curr.valueName.charAt(0).toUpperCase() + curr.valueName.slice(1);
-          acc.push(curr);
-        }
-        return acc;
-      }, []);
+    this.scrapyService.getSpiderArgs('platforms').subscribe((response: Parameter) => {
+      this.platforms = this.removeDuplicates(response.values);
+    });
+
+    this.scrapyService.getSpiderArgs('regions').subscribe((response: Parameter) => {
+      this.regions = this.removeDuplicates(response.values);
     });
 
     //   subscribes to the event that emits the game search
-    this.debouncer.pipe(debounceTime(300)).subscribe((value) =>
-      this.event.emit({
+    this.bouncer.pipe(debounceTime(300)).subscribe((value) =>
+      this.OnSearch.emit({
         game: value,
         param: [
           {
@@ -66,6 +62,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
               return platform;
             }),
           },
+          {
+            id: '',
+            name: 'regions',
+            values: this.selectedRegions.map((region) => {
+              region.valueName = region.valueName.toLowerCase();
+              return region;
+            }),
+          },
         ],
       }),
     );
@@ -74,7 +78,34 @@ export class NavbarComponent implements OnInit, OnDestroy {
   onSearch() {
     this.search = this.search.trim();
     if (this.search.length > 3) {
-      this.debouncer.next(this.search);
+      this.bouncer.next(this.search);
     }
   }
+
+  handleParameterValues(values: Value[]): Value[] {
+    return values.reduce(
+      (acc: Value[], curr: Value) => {
+        const index = acc.findIndex((x) => x.commonName === curr.commonName);
+        if (index !== -1) { console.log('duplicate'); }
+        if (index === -1) {
+          curr.commonName = curr.commonName.charAt(0).toUpperCase() + curr.commonName.slice(1);
+          acc.push(curr);
+        }
+        return acc;
+      }, []
+    );
+  }
+
+  removeDuplicates(arr: Value[]) {
+    const result: Value[] = [];
+    const map = new Map();
+    for (const item of arr) {
+      if (!map.has(item.commonName)) {
+        map.set(item.commonName, true);
+        item.commonName = item.commonName.charAt(0).toUpperCase() + item.commonName.slice(1);
+        result.push(item);
+      }
+    }
+    return result;
+  };
 }
