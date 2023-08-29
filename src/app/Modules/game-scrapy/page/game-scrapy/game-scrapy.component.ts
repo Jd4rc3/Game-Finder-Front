@@ -3,6 +3,7 @@ import { ScrapyService } from '../../services/scrapy.service';
 import { Game } from 'src/app/Modules/Core/Domain/game.model';
 import { Message } from 'primeng/api';
 import { Parameter } from '../../../Core/Domain/parameter.model';
+import { GameSearch } from 'src/app/Modules/Core/Domain/game-search.model';
 
 @Component({
   selector: 'app-game-scrapy',
@@ -14,7 +15,7 @@ export class GameScrapyComponent implements OnInit {
   showLoader = false;
   @ViewChild('template', { static: true }) template!: Element;
 
-  constructor(private scrapy: ScrapyService) {}
+  constructor(private scrapy: ScrapyService) { }
 
   _games: Game[] = [];
 
@@ -32,7 +33,7 @@ export class GameScrapyComponent implements OnInit {
     ];
   }
 
-  search(value: { game: string; param: Parameter[] }) {
+  search(value: GameSearch) {
     this.showLoader = true;
     this._games = [];
     this.scrapy
