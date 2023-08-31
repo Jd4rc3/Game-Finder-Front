@@ -3,12 +3,6 @@ export interface Game {
   price: number;
   link: string;
   store: string;
-  photos: Photo[];
+  photo: string;
   exchange: string;
-}
-
-export interface Photo {
-  url: string;
-  width: string;
-  height: string;
 }
