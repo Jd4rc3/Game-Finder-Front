@@ -33,7 +33,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   @Output()
   OnSearch: EventEmitter<GameSearch> = new EventEmitter<GameSearch>();
 
-  constructor(private scrapyService: ScrapyService) { }
+  constructor(private scrapyService: ScrapyService) {}
 
   ngOnDestroy(): void {
     this.subject.next();
@@ -41,16 +41,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.scrapyService.getSpiderArgs('platforms').subscribe((response: Parameter) => {
-      this.platforms = this.removeDuplicates(response.values);
-    });
+    this.scrapyService
+      .getSpiderArgs('platforms')
+      .subscribe((response: Parameter) => {
+        this.platforms = this.removeDuplicates(response.values);
+      });
 
-    this.scrapyService.getSpiderArgs('regions').subscribe((response: Parameter) => {
-      this.regions = this.removeDuplicates(response.values);
-    });
+    this.scrapyService
+      .getSpiderArgs('regions')
+      .subscribe((response: Parameter) => {
+        this.regions = this.removeDuplicates(response.values);
+      });
 
     //   subscribes to the event that emits the game search
-    this.bouncer.pipe(debounceTime(300)).subscribe((value) =>
+    this.bouncer.pipe(debounceTime(600)).subscribe((value) =>
       this.OnSearch.emit({
         game: value,
         param: [
@@ -82,30 +86,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleParameterValues(values: Value[]): Value[] {
-    return values.reduce(
-      (acc: Value[], curr: Value) => {
-        const index = acc.findIndex((x) => x.commonName === curr.commonName);
-        if (index !== -1) { console.log('duplicate'); }
-        if (index === -1) {
-          curr.commonName = curr.commonName.charAt(0).toUpperCase() + curr.commonName.slice(1);
-          acc.push(curr);
-        }
-        return acc;
-      }, []
-    );
-  }
-
   removeDuplicates(arr: Value[]) {
     const result: Value[] = [];
     const map = new Map();
     for (const item of arr) {
       if (!map.has(item.commonName)) {
         map.set(item.commonName, true);
-        item.commonName = item.commonName.charAt(0).toUpperCase() + item.commonName.slice(1);
         result.push(item);
       }
     }
     return result;
-  };
+  }
 }

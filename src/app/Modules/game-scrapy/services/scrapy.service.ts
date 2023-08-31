@@ -53,8 +53,8 @@ export class ScrapyService {
     );
   }
 
-  getSpiderArgs(arg: string): void {
-    this.http.get<Parameter>(`${environment.paramsUrl}/${arg}`).subscribe((params) => { this.pushParams(params) });
+  getSpiderArgs(arg: string){
+   return this.http.get<Parameter>(`${environment.paramsUrl}/${arg}`);
   }
 
   classifier(args: Parameter[]) {
