@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, merge, mergeMap, Observable, Subject } from 'rxjs';
+import { map, merge, mergeMap, Observable, Subject, tap } from 'rxjs';
 import { Game } from '../../Core/Domain/game.model';
 import { HttpClient as http, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment.development';
@@ -11,12 +11,13 @@ import { SpecificParameter } from '../../Core/Domain/specific.parameter';
   providedIn: 'root',
 })
 export class ScrapyService {
+  cachedParams = new Map<string, Parameter>();
   constructor(private http: http) { }
-  params = new Subject<Parameter[]>();
-  params$ = this.params.asObservable();
 
-  pushParams(params: Parameter[]) {
-    this.params.next(params);
+  pushParams(param: Parameter) {
+    if (!this.cachedParams.has(param.name)) {
+      this.cachedParams.set(param.name, param);
+    }
   }
 
   buildArgs(
@@ -53,23 +54,29 @@ export class ScrapyService {
     );
   }
 
-  getSpiderArgs(arg: string){
-   return this.http.get<Parameter>(`${environment.paramsUrl}/${arg}`);
+  getSpiderArgs(arg: string) {
+  return  this.http.get<Parameter>(`${environment.paramsUrl}/${arg}`).pipe(
+      tap((param) => this.pushParams(param)),
+    );
   }
 
   classifier(args: Parameter[]) {
     const classifiedArgs = new Map<string, SpecificParameter[]>();
 
     args.forEach((arg) => {
-      arg.values.forEach((value) => {
+      let values = this.cachedParams.get(arg.name)?.values;
+
+      if (arg.name === 'regions') values = values?.filter(v => v.commonName === arg.values[0].commonName);
+
+      values?.forEach((value) => {
         if (classifiedArgs.has(value.name)) {
           classifiedArgs.get(value.name)?.push({ [arg.name]: value.valueName });
         } else {
-          classifiedArgs.set(value.commonName, [
+          classifiedArgs.set(value.name, [
             { [arg.name]: value.valueName },
           ]);
         }
-      });
+      })
     });
 
     return classifiedArgs;
